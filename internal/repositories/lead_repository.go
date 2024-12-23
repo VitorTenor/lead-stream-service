@@ -28,12 +28,12 @@ func (lr *leadRepository) Create(ctx *context.Context, lead *bson.D) error {
 }
 
 func (lr *leadRepository) CreateMany(ctx *context.Context, leads []*bson.D) error {
-	documents := make([]interface{}, len(leads))
+	doc := make([]interface{}, len(leads))
 	for i, v := range leads {
-		documents[i] = v
+		doc[i] = v
 	}
 
-	_, err := lr.coll.InsertMany(*ctx, documents)
+	_, err := lr.coll.InsertMany(*ctx, doc)
 	if err != nil {
 		return err
 	}

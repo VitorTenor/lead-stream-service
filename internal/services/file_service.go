@@ -6,6 +6,8 @@ import (
 	"github.com/vitortenor/lead-stream-service/internal/domain"
 	"github.com/vitortenor/lead-stream-service/internal/repositories"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 type FileService struct {
@@ -71,11 +73,11 @@ func (fs *FileService) ProcessAndSave(ctx *context.Context, file *domain.File) e
 			}
 		}
 
-		document, err := leadFromRecord(record, headers, *schema)
+		doc, err := leadFromRecord(record, headers, *schema)
 		if err != nil {
 			return err
 		}
-		leads = append(leads, document)
+		leads = append(leads, doc)
 	}
 
 	err = fs.leadRepository.CreateMany(ctx, leads)
@@ -87,21 +89,26 @@ func (fs *FileService) ProcessAndSave(ctx *context.Context, file *domain.File) e
 }
 
 func leadFromRecord(record []string, headers []string, schema domain.Schema) (*bson.D, error) {
-	document := bson.D{}
+	doc := bson.D{}
 	seen := make(map[string]string)
 	for _, field := range schema.Fields {
 		seen[field.Name] = field.Type
 	}
 
-	document = append(document, bson.E{Key: "schema_id", Value: schema.ID})
+	doc = append(doc, bson.E{Key: "schema_id", Value: schema.ID})
+
+	dateTime := primitive.NewDateTimeFromTime(time.Now())
 
 	for i, value := range record {
 		parsedValue, err := domain.ValueFromType(value, seen[headers[i]])
 		if err != nil {
 			return nil, domain.ErrInvalidFieldValues
 		}
-		document = append(document, bson.E{Key: headers[i], Value: parsedValue})
+		doc = append(doc, bson.E{Key: headers[i], Value: parsedValue})
 	}
 
-	return &document, nil
+	doc = append(doc, bson.E{Key: "created_at", Value: dateTime})
+	doc = append(doc, bson.E{Key: "updated_at", Value: dateTime})
+
+	return &doc, nil
 }
