@@ -21,7 +21,7 @@ type SchemaField struct {
 
 func (s *Schema) ValidateIfFieldsTypesAreValid() bool {
 	for _, field := range s.Fields {
-		if !validTypes[strings.ToLower(field.Type)] {
+		if !validTypes[field.Type] {
 			return false
 		}
 	}
@@ -44,6 +44,26 @@ func (s *Schema) Normalize() {
 		s.Fields[i].Name = strings.ToLower(s.Fields[i].Name)
 		s.Fields[i].Type = strings.ToLower(s.Fields[i].Type)
 	}
+}
+
+func (s *Schema) ValidateIfRequiredFieldsArePresent() bool {
+	seen := make(map[string]bool)
+	for _, field := range s.Fields {
+		seen[field.Name] = true
+	}
+
+	for requiredField := range requiredFields {
+		if !seen[requiredField] {
+			return false
+		}
+	}
+
+	return true
+}
+
+var requiredFields = map[string]bool{
+	"phone": true,
+	"email": true,
 }
 
 var validTypes = map[string]bool{

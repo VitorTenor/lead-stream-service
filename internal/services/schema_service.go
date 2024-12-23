@@ -7,16 +7,18 @@ import (
 )
 
 type SchemaService struct {
-	schemaRepository repositories.SchemaRepository
+	SchemaRepository repositories.SchemaRepository
 }
 
 func NewSchemaService(sr repositories.SchemaRepository) *SchemaService {
 	return &SchemaService{
-		schemaRepository: sr,
+		SchemaRepository: sr,
 	}
 }
 
 func (s *SchemaService) ValidateAndSave(ctx *context.Context, schema *domain.Schema) (*domain.Schema, error) {
+	schema.Normalize()
+
 	if !schema.ValidateIfFieldsTypesAreValid() {
 		return nil, domain.ErrInvalidFieldTypes
 	}
@@ -25,14 +27,16 @@ func (s *SchemaService) ValidateAndSave(ctx *context.Context, schema *domain.Sch
 		return nil, domain.ErrFieldsNotUnique
 	}
 
-	schema.Normalize()
+	if !schema.ValidateIfRequiredFieldsArePresent() {
+		return nil, domain.ErrRequiredFieldsNotPresent
+	}
 
-	err := s.schemaRepository.Create(ctx, schema)
+	err := s.SchemaRepository.Create(ctx, schema)
 	if err != nil {
 		return nil, err
 	}
 
-	schema, err = s.schemaRepository.FindById(ctx, schema.ID.Hex())
+	schema, err = s.SchemaRepository.FindById(ctx, schema.ID.Hex())
 	if err != nil {
 		return nil, err
 	}

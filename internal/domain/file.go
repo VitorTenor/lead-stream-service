@@ -12,8 +12,8 @@ type File struct {
 
 func ValidateRequiredFields(headers []string) bool {
 	requiredFields := map[string]string{
-		"telephone": "",
-		"email":     "",
+		"phone": "",
+		"email": "",
 	}
 
 	seen := make(map[string]struct{})
