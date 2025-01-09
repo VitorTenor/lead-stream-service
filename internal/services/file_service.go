@@ -11,19 +11,19 @@ import (
 )
 
 type FileService struct {
-	schemaRepository repositories.SchemaRepository
-	leadRepository   repositories.LeadRepository
+	SchemaRepository repositories.SchemaRepository
+	LeadRepository   repositories.LeadRepository
 }
 
 func NewFileService(sr repositories.SchemaRepository, lr repositories.LeadRepository) *FileService {
 	return &FileService{
-		schemaRepository: sr,
-		leadRepository:   lr,
+		SchemaRepository: sr,
+		LeadRepository:   lr,
 	}
 }
 
 func (fs *FileService) ProcessAndSave(ctx *context.Context, file *domain.File) error {
-	schema, err := fs.schemaRepository.FindById(ctx, file.SchemaId)
+	schema, err := fs.SchemaRepository.FindById(ctx, file.SchemaId)
 	if err != nil {
 		return err
 	}
@@ -49,23 +49,26 @@ func (fs *FileService) ProcessAndSave(ctx *context.Context, file *domain.File) e
 	}
 
 	var leads []*bson.D
-	seen := make(map[string]map[string]bool)
+	uniqueFieldsMap := make(map[string]map[string]bool)
 
 	for _, field := range schema.Fields {
 		if field.Unique {
-			seen[field.Name] = make(map[string]bool)
+			uniqueFieldsMap[field.Name] = make(map[string]bool)
 		}
 	}
 
 	for {
 		record, err := reader.Read()
 		if err != nil {
-			break
+			if err.Error() == "EOF" {
+				break
+			}
+			return err
 		}
 
 		for i, value := range record {
 			header := headers[i]
-			if uniqueFields, ok := seen[header]; ok {
+			if uniqueFields, ok := uniqueFieldsMap[header]; ok {
 				if uniqueFields[value] {
 					return domain.ErrDuplicatedValue
 				}
@@ -80,7 +83,7 @@ func (fs *FileService) ProcessAndSave(ctx *context.Context, file *domain.File) e
 		leads = append(leads, doc)
 	}
 
-	err = fs.leadRepository.CreateMany(ctx, leads)
+	err = fs.LeadRepository.CreateMany(ctx, leads)
 	if err != nil {
 		return err
 	}
