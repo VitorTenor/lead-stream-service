@@ -1,7 +1,9 @@
 package configuration
 
 import (
+	"context"
 	"errors"
+	"github.com/vitortenor/lead-stream-service/internal/tools"
 	"gopkg.in/yaml.v2"
 	"log"
 	"os"
@@ -24,14 +26,15 @@ type Config struct {
 	} `yaml:"database"`
 }
 
-func InitConfig(fileName string) (*Config, error) {
+func InitConfig(_ context.Context, fileName string) (*Config, error) {
 	log.Println("Loading configuration file...")
-	pwd, err := os.Getwd()
+
+	path, err := tools.FindProjectRoot()
 	if err != nil {
 		return nil, err
 	}
 
-	configPath := filepath.Join(pwd, fileName)
+	configPath := filepath.Join(path, "resources", fileName)
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return nil, errors.New("configuration file does not exist")
 	}

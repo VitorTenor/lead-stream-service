@@ -1,0 +1,5 @@
+# csv for schemaId: 67808a19c567c857d77d7f12
+# repeated values
+email,phone,name,name
+test@test.com,123456789,Test,name
+test@test2.com,12345678,Test2,name
