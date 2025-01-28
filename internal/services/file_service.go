@@ -35,6 +35,7 @@ func (fs *FileService) ProcessAndSave(ctx *context.Context, file *domain.File) e
 	defer openedFile.Close()
 
 	reader := csv.NewReader(openedFile)
+	reader.Comment = '#'
 	headers, err := reader.Read()
 	if err != nil {
 		return err
@@ -42,6 +43,10 @@ func (fs *FileService) ProcessAndSave(ctx *context.Context, file *domain.File) e
 
 	if !domain.ValidateRequiredFields(headers) {
 		return domain.ErrRequiredFieldsMissing
+	}
+
+	if !domain.ValidateDuplicatedFields(headers) {
+		return domain.ErrDuplicatedFields
 	}
 
 	if !domain.ValidateRequiredFieldsFromSchema(headers, schema.Fields) {

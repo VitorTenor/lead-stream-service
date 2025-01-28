@@ -10,6 +10,18 @@ type File struct {
 	File     *multipart.FileHeader
 }
 
+func ValidateDuplicatedFields(headers []string) bool {
+	seen := make(map[string]struct{})
+	for _, field := range headers {
+		if _, ok := seen[field]; ok {
+			return false
+		}
+		seen[field] = struct{}{}
+	}
+
+	return true
+}
+
 func ValidateRequiredFields(headers []string) bool {
 	requiredFields := map[string]string{
 		"phone": "",

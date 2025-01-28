@@ -1,0 +1,4 @@
+# csv for schemaId: 67808a19c567c857d77d7f12
+# missing schema required fields
+email,phone,lastname
+test@test.com,123456789,Test

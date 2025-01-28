@@ -12,14 +12,20 @@ import (
 	"github.com/vitortenor/lead-stream-service/internal/infrastructure"
 	"github.com/vitortenor/lead-stream-service/internal/repositories"
 	"github.com/vitortenor/lead-stream-service/internal/services"
+	"github.com/vitortenor/lead-stream-service/internal/tools"
 	"log"
 	"net/http"
+	"path/filepath"
 )
 
 func main() {
 	ctx := context.Background()
 
-	envConfig, err := configuration.InitConfig("config.yaml")
+	configPath, err := tools.FindProjectRoot()
+	if err != nil {
+		log.Fatal("Failed to find project root: ", err)
+	}
+	envConfig, err := configuration.InitConfig(ctx, filepath.Join(configPath, "config.yaml"))
 	if err != nil {
 		log.Fatal("Failed to load configuration: ", err)
 	}

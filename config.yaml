@@ -1,13 +1,13 @@
 server:
   api:
-    name: "api"
-    version: "v1"
-  host: "127.0.0.1"
+    name: api
+    version: v1
+  host: 127.0.0.1
   port: 8080
 
 database:
-  uri: "mongodb://localhost:27017"
-  name: "lead-stream-service"
+  uri: mongodb://localhost:27017
+  name: lead-stream-service
   collection:
-    schemas: "schemas"
-    leads: "leads"
+    schemas: schemas
+    leads: leads
