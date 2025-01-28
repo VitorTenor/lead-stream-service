@@ -19,10 +19,10 @@ run_tests() {
 }
 
 # Service path
-SERVICE_PATH="/internal/services"
+SERVICE_PATH="./internal/services"
 
 # Integration test path
-INTEGRATION_TEST_PATH="/internal/integration"
+INTEGRATION_TEST_PATH="./internal/integration"
 
 # Run all tests
 echo -e "${YELLOW}Running all Go tests...${NC}"
