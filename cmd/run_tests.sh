@@ -10,6 +10,7 @@ NC='\033[0m' # No Color
 run_tests() {
     local path=$1
     echo -e "${YELLOW}Running tests in $path...${NC}"
+    echo "go test -v $path"
     if go test -v "$path"; then
         echo -e "${GREEN}Tests passed in $path${NC}"
     else
