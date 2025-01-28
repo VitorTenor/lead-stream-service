@@ -10,7 +10,6 @@ NC='\033[0m' # No Color
 run_tests() {
     local path=$1
     echo -e "${YELLOW}Running tests in $path...${NC}"
-    echo "go test -v $path"
     if go test -v "$path"; then
         echo -e "${GREEN}Tests passed in $path${NC}"
     else
@@ -20,10 +19,10 @@ run_tests() {
 }
 
 # Service path
-SERVICE_PATH="../internal/services"
+SERVICE_PATH="/internal/services"
 
 # Integration test path
-INTEGRATION_TEST_PATH="../internal/integration"
+INTEGRATION_TEST_PATH="/internal/integration"
 
 # Run all tests
 echo -e "${YELLOW}Running all Go tests...${NC}"
