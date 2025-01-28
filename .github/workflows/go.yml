@@ -32,3 +32,9 @@ jobs:
 
     - name: Test
       run: chmod +x ./cmd/run_tests.sh && ./cmd/run_tests.sh
+
+    - name: Upload Go test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: Go-results-${{ matrix.go-version }}
+        path: test_results.json
