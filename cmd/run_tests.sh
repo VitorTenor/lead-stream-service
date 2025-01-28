@@ -6,19 +6,28 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+ENVIRONMENT=${ENVIRONMENT:-LOCAL}
+
 # Function to run tests and check for errors
 run_tests() {
     local path=$1
     echo -e "${YELLOW}Running tests in $path...${NC}"
-    if go test -v "$path"; then
-        echo -e "${GREEN}Tests passed in $path${NC}"
-    else
-        echo -e "${RED}Tests failed in $path${NC}"
-        exit 1
+    if [ "$ENVIRONMENT" == "LOCAL" ]; then
+        if go test -v "$path"; then
+            echo -e "${GREEN}Tests passed in $path${NC}"
+        else
+            echo -e "${RED}Tests failed in $path${NC}"
+            exit 1
+        fi
+    elif [ "$ENVIRONMENT" == "TEST" ]; then
+        if go test -json "$path" > test_results.json; then
+            echo -e "${GREEN}Tests passed in $path${NC}"
+        else
+            echo -e "${RED}Tests failed in $path${NC}"
+            exit 1
+        fi
     fi
 }
-
-ENVIRONMENT=${ENVIRONMENT:-LOCAL}
 
 # Set prefix based on environment
 if [ "$ENVIRONMENT" == "LOCAL" ]; then
