@@ -27,6 +27,10 @@ func (s *SchemaService) ValidateAndSave(ctx *context.Context, schema *domain.Sch
 		return nil, domain.ErrFieldsNotUnique
 	}
 
+	if !schema.ValidateCreatedAndUpdatedFields() {
+		return nil, domain.ErrInvalidFieldValues
+	}
+
 	if !schema.ValidateIfRequiredFieldsArePresent() {
 		return nil, domain.ErrRequiredFieldsNotPresent
 	}

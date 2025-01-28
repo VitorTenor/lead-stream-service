@@ -18,7 +18,8 @@ func handleError(err error) error {
 		errors.Is(err, domain.ErrInvalidFieldTypes),
 		errors.Is(err, domain.ErrInvalidFieldValues),
 		errors.Is(err, domain.ErrDuplicatedValue),
-		errors.Is(err, domain.ErrRequiredFieldsNotPresent):
+		errors.Is(err, domain.ErrRequiredFieldsNotPresent),
+		errors.Is(err, domain.ErrDuplicatedFields):
 		return huma.NewError(http.StatusBadRequest, err.Error())
 
 	case errors.Is(err, domain.ErrRequiredFieldsMissing):

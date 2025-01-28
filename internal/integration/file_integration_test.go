@@ -283,15 +283,14 @@ func TestFileHandler_Upload(t *testing.T) {
 				_ = json.NewDecoder(res.Body).Decode(&body)
 				_ = assert.Equal(t, "Bad Request", body.Title)
 				_ = assert.Equal(t, http.StatusBadRequest, body.Status)
-				_ = assert.Equal(t, "duplicated value", body.Detail)
+				_ = assert.Equal(t, "duplicated fields", body.Detail)
 			}
 		}
 	})
-
 }
 
 func openFile(rootPath, fileName string) (*os.File, error) {
-	return os.Open(filepath.Join(rootPath, "resources", "file", fileName))
+	return os.Open(filepath.Join(rootPath, "internal", "integration", "resources", "file", fileName))
 }
 
 func createMultipartForm(file *os.File) (bytes.Buffer, string, error) {

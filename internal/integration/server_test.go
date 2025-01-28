@@ -2,7 +2,6 @@ package integration
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humaecho"
 	"github.com/docker/go-connections/nat"
@@ -11,23 +10,21 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 	"github.com/vitortenor/lead-stream-service/internal/api"
 	"github.com/vitortenor/lead-stream-service/internal/api/handlers"
+	"github.com/vitortenor/lead-stream-service/internal/domain"
 	"github.com/vitortenor/lead-stream-service/internal/repositories"
 	"github.com/vitortenor/lead-stream-service/internal/services"
-	"github.com/vitortenor/lead-stream-service/internal/tools"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"net/http/httptest"
-	"os"
-	"path/filepath"
+	"time"
 )
 
 func InitServerTest() (*httptest.Server, error) {
 	ctx := context.Background()
 
-	mongoC, err := buildDockerContainer(ctx, "mongo:latest", "27017/tcp")
+	mongoC, err := buildDockerContainer(&ctx, "mongo:latest", "27017/tcp")
 	if err != nil {
 		return nil, err
 	}
@@ -49,19 +46,15 @@ func InitServerTest() (*httptest.Server, error) {
 		return nil, err
 	}
 
-	db := client.Database("lead-stream-service-test")
-	log.Println("Connected to in-memory database")
-
-	if cleanDatabaseCollections(ctx, db, []string{"schemas", "leads"}) != nil {
-		return nil, err
-	}
-
-	path, err := tools.FindProjectRoot()
+	err = client.Ping(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	err = insertDataFromJSON(ctx, db, filepath.Join(path, "resources", "db", "test_data.json"))
+	db := client.Database("lead-stream-service-test")
+	log.Println("Connected to in-memory database")
+
+	err = seed(&ctx, db.Collection("schemas"), createSchema())
 	if err != nil {
 		return nil, err
 	}
@@ -89,21 +82,21 @@ func InitServerTest() (*httptest.Server, error) {
 	return ts, nil
 }
 
-func buildDockerContainer(ctx context.Context, image string, port string) (testcontainers.Container, error) {
+func buildDockerContainer(ctx *context.Context, image string, port string) (testcontainers.Container, error) {
 	req := testcontainers.ContainerRequest{
 		Image:        image,
 		ExposedPorts: []string{port},
 		WaitingFor:   wait.ForListeningPort(nat.Port(port)),
 	}
-	return testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+	return testcontainers.GenericContainer(*ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
 		Started:          true,
 	})
 }
 
-func cleanDatabaseCollections(ctx context.Context, db *mongo.Database, collNames []string) error {
-	for _, collection := range collNames {
-		_, err := db.Collection(collection).DeleteMany(ctx, bson.D{})
+func seed(ctx *context.Context, coll *mongo.Collection, data []domain.Schema) error {
+	for _, document := range data {
+		_, err := coll.InsertOne(*ctx, document)
 		if err != nil {
 			return err
 		}
@@ -111,32 +104,31 @@ func cleanDatabaseCollections(ctx context.Context, db *mongo.Database, collNames
 	return nil
 }
 
-func insertDataFromJSON(ctx context.Context, db *mongo.Database, filePath string) error {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	var data map[string][]map[string]interface{}
-	if err := json.NewDecoder(file).Decode(&data); err != nil {
-		return err
-	}
-
-	for collectionName, documents := range data {
-		collection := db.Collection(collectionName)
-		for _, document := range documents {
-			if id, ok := document["_id"].(string); ok {
-				objectId, err := primitive.ObjectIDFromHex(id)
-				if err != nil {
-					return err
-				}
-				document["_id"] = objectId
-			}
-			if _, err := collection.InsertOne(ctx, document); err != nil {
-				return err
-			}
+func createSchema() []domain.Schema {
+	createField := func(name, fieldType string, required, unique bool) domain.SchemaField {
+		return domain.SchemaField{
+			Name:     name,
+			Type:     fieldType,
+			Required: required,
+			Unique:   unique,
 		}
 	}
-	return nil
+
+	schemaFields := []domain.SchemaField{
+		createField("email", "string", true, true),
+		createField("name", "string", true, false),
+		createField("phone", "integer", true, true),
+		createField("lastname", "string", false, false),
+	}
+
+	objectId, _ := primitive.ObjectIDFromHex("67808a19c567c857d77d7f12")
+
+	schema := domain.Schema{
+		ID:        objectId,
+		Fields:    schemaFields,
+		CreatedAt: primitive.NewDateTimeFromTime(time.Now()),
+		UpdatedAt: primitive.NewDateTimeFromTime(time.Now()),
+	}
+
+	return []domain.Schema{schema}
 }

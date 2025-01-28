@@ -59,7 +59,7 @@ func TestSchemaHandler_Create(t *testing.T) {
 		}
 	})
 
-	_ = t.Run("invalid field type", func(t *testing.T) {
+	_ = t.Run("invalid body - invalid field type", func(t *testing.T) {
 		// arrange
 		var reqBody = `
 		{
@@ -95,7 +95,7 @@ func TestSchemaHandler_Create(t *testing.T) {
 		}
 	})
 
-	_ = t.Run("fields not unique", func(t *testing.T) {
+	_ = t.Run("invalid body - fields not unique", func(t *testing.T) {
 		// arrange
 		var reqBody = `
 		{
@@ -131,7 +131,7 @@ func TestSchemaHandler_Create(t *testing.T) {
 		}
 	})
 
-	_ = t.Run("required fields not present", func(t *testing.T) {
+	_ = t.Run("invalid body - required fields not present", func(t *testing.T) {
 		// arrange
 		var reqBody = `
 		{
@@ -167,7 +167,7 @@ func TestSchemaHandler_Create(t *testing.T) {
 		}
 	})
 
-	_ = t.Run("without body", func(t *testing.T) {
+	_ = t.Run("invalid body - without body", func(t *testing.T) {
 		// act
 		res, err := http.Post(schemaUrl, echo.MIMEApplicationJSON, nil)
 
@@ -183,7 +183,7 @@ func TestSchemaHandler_Create(t *testing.T) {
 		}
 	})
 
-	_ = t.Run("invalid body - fields", func(t *testing.T) {
+	_ = t.Run("invalid body - no fields", func(t *testing.T) {
 		// arrange
 		var reqBody = `
 		{
@@ -263,4 +263,89 @@ func TestSchemaHandler_Create(t *testing.T) {
 		}
 	})
 
+	_ = t.Run("invalid body - created_at field", func(t *testing.T) {
+		// arrange
+		var reqBody = `
+		{
+			"fields": [
+				{
+					"name": "email",
+					"type": "string",
+					"required": true,
+					"unique": true
+				},
+				{
+					"name": "phone",
+					"type": "integer",
+					"required": true,
+					"unique": true
+				},
+				{
+					"name": "name",
+					"type": "integer"
+				},
+				{
+					"name": "created_at",
+					"type": "datetime"
+				},
+			]
+		}
+		`
+		// act
+		res, err := http.Post(schemaUrl, echo.MIMEApplicationJSON, bytes.NewBufferString(reqBody))
+
+		// assert
+		if assert.NoError(t, err) {
+			if assert.Equal(t, http.StatusBadRequest, res.StatusCode) {
+				var body huma.ErrorModel
+				_ = json.NewDecoder(res.Body).Decode(&body)
+				_ = assert.Equal(t, "Bad Request", body.Title)
+				_ = assert.Equal(t, http.StatusBadRequest, body.Status)
+				_ = assert.Equal(t, "validation failed", body.Detail)
+			}
+		}
+	})
+
+	_ = t.Run("invalid body - updated_at field", func(t *testing.T) {
+		// arrange
+		var reqBody = `
+		{
+			"fields": [
+				{
+					"name": "email",
+					"type": "string",
+					"required": true,
+					"unique": true
+				},
+				{
+					"name": "phone",
+					"type": "integer",
+					"required": true,
+					"unique": true
+				},
+				{
+					"name": "name",
+					"type": "integer"
+				},
+				{
+					"name": "updated_at",
+					"type": "datetime"
+				},
+			]
+		}
+		`
+		// act
+		res, err := http.Post(schemaUrl, echo.MIMEApplicationJSON, bytes.NewBufferString(reqBody))
+
+		// assert
+		if assert.NoError(t, err) {
+			if assert.Equal(t, http.StatusBadRequest, res.StatusCode) {
+				var body huma.ErrorModel
+				_ = json.NewDecoder(res.Body).Decode(&body)
+				_ = assert.Equal(t, "Bad Request", body.Title)
+				_ = assert.Equal(t, http.StatusBadRequest, body.Status)
+				_ = assert.Equal(t, "validation failed", body.Detail)
+			}
+		}
+	})
 }

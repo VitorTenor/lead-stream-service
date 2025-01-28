@@ -3,12 +3,10 @@ package services
 import (
 	"context"
 	"encoding/csv"
-	"errors"
 	"github.com/vitortenor/lead-stream-service/internal/domain"
 	"github.com/vitortenor/lead-stream-service/internal/repositories"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"strings"
 	"time"
 )
 
@@ -37,13 +35,18 @@ func (fs *FileService) ProcessAndSave(ctx *context.Context, file *domain.File) e
 	defer openedFile.Close()
 
 	reader := csv.NewReader(openedFile)
-	headers, err := nextValue(reader)
+	reader.Comment = '#'
+	headers, err := reader.Read()
 	if err != nil {
 		return err
 	}
 
 	if !domain.ValidateRequiredFields(headers) {
 		return domain.ErrRequiredFieldsMissing
+	}
+
+	if !domain.ValidateDuplicatedFields(headers) {
+		return domain.ErrDuplicatedFields
 	}
 
 	if !domain.ValidateRequiredFieldsFromSchema(headers, schema.Fields) {
@@ -60,7 +63,7 @@ func (fs *FileService) ProcessAndSave(ctx *context.Context, file *domain.File) e
 	}
 
 	for {
-		record, err := nextValue(reader)
+		record, err := reader.Read()
 		if err != nil {
 			if err.Error() == "EOF" {
 				break
@@ -116,23 +119,4 @@ func leadFromRecord(record []string, headers []string, schema domain.Schema) (*b
 	doc = append(doc, bson.E{Key: "updated_at", Value: dateTime})
 
 	return &doc, nil
-}
-
-func nextValue(reader *csv.Reader) ([]string, error) {
-	for {
-		record, err := reader.Read()
-		if err != nil {
-			if err.Error() == "EOF" {
-				return nil, nil
-			}
-			if errors.Is(err, csv.ErrFieldCount) {
-				return record, nil
-			}
-			return nil, err
-		}
-		if len(record) > 0 && strings.HasPrefix(record[0], "#") {
-			continue
-		}
-		return record, nil
-	}
 }
