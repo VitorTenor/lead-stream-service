@@ -38,7 +38,7 @@ jobs:
       run: go mod download
 
     - name: Make test script executable
-      run: chmod +x ../../cmd/run_test.sh
+      run: chmod +x ../../cmd/run_tests.sh
 
     - name: Run test script
-      run: ../../cmd/run_test.sh
+      run: ../../cmd/run_tests.sh
