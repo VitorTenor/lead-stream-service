@@ -37,49 +37,40 @@ jobs:
     - name: Upload Go test results
       uses: actions/upload-artifact@v4
       with:
-        name: Go-results-${{ matrix.go-version }}
+        name: Go-results
         path: test_results.json
 
   codeql-analysis:
-      name: Analyze code with CodeQL
-      runs-on: ubuntu-latest
-      timeout-minutes: 360
-      permissions:
-        security-events: write
-        actions: read
-        contents: read
+    name: Analyze code with CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
 
-      strategy:
-        fail-fast: false
-        matrix:
-          language: [ go ]
-          build-mode: [ autobuild ]
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'go' ]
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Set up Go
-          uses: actions/setup-go@v4
-          with:
-            go-version: '1.23.4'
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23.4'
 
-        - name: Initialize CodeQL
-          uses: github/codeql-action/init@v3
-          with:
-            languages: ${{ matrix.language }}
-            build-mode: ${{ matrix.build-mode }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
 
-        - if: matrix.build-mode == 'manual'
-          run: |
-            echo 'If you are using a "manual" build mode for one or more of the' \
-              'languages you are analyzing, replace this with the commands to build' \
-              'your code, for example:'
-            echo '  make bootstrap'
-            echo '  make release'
-            exit 1
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
 
-        - name: Perform CodeQL Analysis
-          uses: github/codeql-action/analyze@v3
-          with:
-            category: "/language:${{matrix.language}}"
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
