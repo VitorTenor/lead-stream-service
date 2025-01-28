@@ -18,14 +18,25 @@ run_tests() {
     fi
 }
 
+ENVIRONMENT=${ENVIRONMENT:-LOCAL}
+
+# Set prefix based on environment
+if [ "$ENVIRONMENT" == "LOCAL" ]; then
+    PREFIX="../"
+elif [ "$ENVIRONMENT" == "TEST" ]; then
+    PREFIX="./"
+else
+    PREFIX=""
+fi
+
 # Service path
-SERVICE_PATH="./internal/services"
+SERVICE_PATH="${PREFIX}internal/services"
 
 # Integration test path
-INTEGRATION_TEST_PATH="./internal/integration"
+INTEGRATION_TEST_PATH="${PREFIX}internal/integration"
 
 # Run all tests
-echo -e "${YELLOW}Running all Go tests...${NC}"
+echo -e "${YELLOW}Running all Go tests in environment: $ENVIRONMENT...${NC}"
 run_tests "$SERVICE_PATH"
 run_tests "$INTEGRATION_TEST_PATH"
 
