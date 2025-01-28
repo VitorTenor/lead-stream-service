@@ -9,4 +9,5 @@ var (
 	ErrInvalidFieldValues       = errors.New("invalid field values")
 	ErrDuplicatedValue          = errors.New("duplicated value")
 	ErrRequiredFieldsNotPresent = errors.New("required fields not present")
+	ErrDuplicatedFields         = errors.New("duplicated fields")
 )

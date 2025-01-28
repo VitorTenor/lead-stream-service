@@ -1,11 +1,11 @@
 package configuration
 
 import (
+	"context"
 	"errors"
 	"gopkg.in/yaml.v2"
 	"log"
 	"os"
-	"path/filepath"
 )
 
 type Config struct {
@@ -24,19 +24,14 @@ type Config struct {
 	} `yaml:"database"`
 }
 
-func InitConfig(fileName string) (*Config, error) {
+func InitConfig(_ context.Context, path string) (*Config, error) {
 	log.Println("Loading configuration file...")
-	pwd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
 
-	configPath := filepath.Join(pwd, fileName)
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return nil, errors.New("configuration file does not exist")
 	}
 
-	data, err := os.ReadFile(configPath)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

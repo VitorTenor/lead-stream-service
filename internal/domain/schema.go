@@ -61,6 +61,15 @@ func (s *Schema) ValidateIfRequiredFieldsArePresent() bool {
 	return true
 }
 
+func (s *Schema) ValidateCreatedAndUpdatedFields() bool {
+	for _, field := range s.Fields {
+		if field.Name == "created_at" || field.Name == "updated_at" {
+			return false
+		}
+	}
+	return true
+}
+
 var requiredFields = map[string]bool{
 	"phone": true,
 	"email": true,
