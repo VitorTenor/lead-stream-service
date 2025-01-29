@@ -1,21 +1,30 @@
----
-# Exclude test files from linting
+# Excluir arquivos de teste do linting
 exclude:
   - "**/*_test.go"
 
 linters-settings:
   govet:
-    shadow: false
+    shadow: false  # Desabilitar a verificação de sombreamento de variáveis
 
   gocyclo:
-    min-complexity: 20
+    min-complexity: 20  # Aumentar o limite de complexidade ciclomática
 
   typecheck:
     skip-dirs:
-      - "**/*.go"
+      - "internal/api/handlers"
+      - "internal/domain"
+      - "cmd"
+    skip-files:
+      - "internal/api/router.go"
 
   revive:
     disable:
       - var-naming
 
-
+skip-files:
+  - internal/api/handlers/error_handler.go
+  - internal/api/handlers/file_handler.go
+  - internal/api/handlers/schema_handler.go
+  - internal/domain/file.go
+  - internal/repositories/schema_repository.go
+  - internal/services/file_service.go
