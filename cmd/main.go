@@ -38,7 +38,11 @@ func main() {
 	}
 	log.Println("Connected to database")
 
-	defer db.Client().Disconnect(ctx)
+	defer func() {
+		if err := db.Client().Disconnect(ctx); err != nil {
+			log.Println("Failed to disconnect from database: ", err)
+		}
+	}()
 
 	schemaHandler := handlers.NewSchemaHandler(
 		services.NewSchemaService(

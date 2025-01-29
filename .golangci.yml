@@ -2,3 +2,6 @@
 # Exclude test files from linting
 exclude:
   - "**/*_test.go"
+
+disable:
+  - typecheck

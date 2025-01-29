@@ -34,7 +34,7 @@ func ValidateRequiredFields(headers []string) bool {
 	}
 
 	isValid := true
-	for k, _ := range requiredFields {
+	for k := range requiredFields {
 		if _, ok := seen[k]; !ok {
 			isValid = false
 			break
