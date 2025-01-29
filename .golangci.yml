@@ -18,13 +18,4 @@ linters-settings:
     disable:
       - var-naming
 
-# Ignorar arquivos ou diretórios específicos
-#skip-files:
-#  - cmd/main.go
-#  - internal/api/handlers/error_handler.go
-#  - internal/api/handlers/file_handler.go
-#  - internal/api/handlers/schema_handler.go
-#  - internal/api/router.go
-#  - internal/domain/file.go
-#  - internal/repositories/schema_repository.go
-#  - internal/services/file_service.go
+
