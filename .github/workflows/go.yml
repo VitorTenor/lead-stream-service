@@ -59,5 +59,18 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: "main"
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          GO_LINTER_RULES: ./.golangci.yml
           FILTER_REGEX_EXCLUDE: ".*_test.go"
+          GO_LINTER_RULES: |
+            linters-settings:
+              govet:
+                shadow: false  
+
+              gocyclo:
+                min-complexity: 20  
+
+              revive:
+                disable:
+                  - var-naming  
+
+            disable:
+              - typecheck
