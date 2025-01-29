@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"context"
+	"net/http"
+	"time"
+
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/vitortenor/lead-stream-service/internal/domain"
 	"github.com/vitortenor/lead-stream-service/internal/services"
-	"net/http"
-	"time"
 )
 
 func InitSchemaRoutes(humaApi huma.API, schemaHandler *SchemaHandler) {

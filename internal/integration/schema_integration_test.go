@@ -3,12 +3,13 @@ package integration
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/danielgtaylor/huma/v2"
-	"github.com/labstack/echo/v4"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"testing"
+
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSchemaHandler_Create(t *testing.T) {

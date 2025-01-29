@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"context"
+	"mime/multipart"
+	"net/http"
+
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/vitortenor/lead-stream-service/internal/domain"
 	"github.com/vitortenor/lead-stream-service/internal/services"
-	"mime/multipart"
-	"net/http"
 )
 
 func InitFileRoutes(humaApi huma.API, fileHandler *FileHandler) {

@@ -2,6 +2,10 @@ package integration
 
 import (
 	"context"
+	"log"
+	"net/http/httptest"
+	"time"
+
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humaecho"
 	"github.com/docker/go-connections/nat"
@@ -16,9 +20,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"net/http/httptest"
-	"time"
 )
 
 func InitServerTest() (*httptest.Server, error) {

@@ -3,6 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+	"path/filepath"
+
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humaecho"
 	"github.com/labstack/echo/v4"
@@ -13,9 +17,6 @@ import (
 	"github.com/vitortenor/lead-stream-service/internal/repositories"
 	"github.com/vitortenor/lead-stream-service/internal/services"
 	"github.com/vitortenor/lead-stream-service/internal/tools"
-	"log"
-	"net/http"
-	"path/filepath"
 )
 
 func main() {

@@ -3,10 +3,6 @@ package integration
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/danielgtaylor/huma/v2"
-	"github.com/labstack/echo/v4"
-	"github.com/stretchr/testify/assert"
-	"github.com/vitortenor/lead-stream-service/internal/tools"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -14,6 +10,11 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
+	"github.com/vitortenor/lead-stream-service/internal/tools"
 )
 
 func TestFileHandler_Upload(t *testing.T) {

@@ -3,8 +3,9 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"github.com/danielgtaylor/huma/v2"
 	"net/http"
+
+	"github.com/danielgtaylor/huma/v2"
 
 	"github.com/vitortenor/lead-stream-service/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"

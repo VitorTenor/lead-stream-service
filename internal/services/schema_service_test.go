@@ -2,10 +2,11 @@ package services
 
 import (
 	"context"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/vitortenor/lead-stream-service/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"testing"
 )
 
 func TestSchemaService_ValidateAndSave(t *testing.T) {

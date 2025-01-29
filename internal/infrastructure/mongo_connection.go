@@ -2,11 +2,12 @@ package infrastructure
 
 import (
 	"context"
+	"log"
+
 	"github.com/vitortenor/lead-stream-service/internal/configuration"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 )
 
 func CreateConnection(ctx context.Context, envConfig *configuration.Config) (*mongo.Database, error) {

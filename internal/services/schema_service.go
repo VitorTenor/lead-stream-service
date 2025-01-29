@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+
 	"github.com/vitortenor/lead-stream-service/internal/domain"
 	"github.com/vitortenor/lead-stream-service/internal/repositories"
 )

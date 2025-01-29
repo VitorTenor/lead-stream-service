@@ -3,11 +3,12 @@ package services
 import (
 	"context"
 	"encoding/csv"
+	"time"
+
 	"github.com/vitortenor/lead-stream-service/internal/domain"
 	"github.com/vitortenor/lead-stream-service/internal/repositories"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type FileService struct {

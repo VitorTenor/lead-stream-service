@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"context"
+	"time"
+
 	"github.com/vitortenor/lead-stream-service/internal/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type SchemaRepository interface {

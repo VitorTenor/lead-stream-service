@@ -3,9 +3,10 @@ package configuration
 import (
 	"context"
 	"errors"
-	"gopkg.in/yaml.v2"
 	"log"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
