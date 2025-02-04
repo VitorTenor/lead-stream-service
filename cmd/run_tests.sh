@@ -1,11 +1,15 @@
 #!/bin/bash
 
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
 # Define colors for pretty output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+# Set environment to LOCAL if not already set
 ENVIRONMENT=${ENVIRONMENT:-LOCAL}
 
 # Function to run tests and check for errors
@@ -26,6 +30,9 @@ run_tests() {
             echo -e "${RED}Tests failed in $path${NC}"
             exit 1
         fi
+    else
+        echo -e "${RED}Unknown environment: $ENVIRONMENT${NC}"
+        exit 1
     fi
 }
 
