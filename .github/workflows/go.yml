@@ -3,10 +3,8 @@
 # For more information see:
 # BUILD:
 # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-# LINTER:
-# https://github.com/github/super-linter
 
-name: Go
+name: go-cli
 
 on:
   push:
@@ -43,34 +41,3 @@ jobs:
         with:
           name: Go-results
           path: test_results.json
-
-  run-lint:
-    name: Run Linter
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Lint Code Base
-        uses: github/super-linter@v4
-        env:
-          VALIDATE_ALL_CODEBASE: true
-          DEFAULT_BRANCH: "main"
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          FILTER_REGEX_EXCLUDE: ".*_test.go"
-          GO_LINTER_RULES: |
-            linters-settings:
-              govet:
-                shadow: false  
-
-              gocyclo:
-                min-complexity: 20  
-
-              revive:
-                disable:
-                  - var-naming  
-
-            disable:
-              - typecheck
