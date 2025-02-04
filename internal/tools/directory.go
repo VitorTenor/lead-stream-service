@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-var projectNamespace = "lead-stream-service"
+const projectNamespace = "lead-stream-service"
 
 func FindProjectRoot() (string, error) {
 	pwd, err := os.Getwd()
